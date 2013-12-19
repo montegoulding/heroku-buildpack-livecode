@@ -10,8 +10,6 @@ BIN_DIR=$(dirname $0)
 BUILD_DIR=$1
 CACHE_DIR=$2
 
-APPTYPE=`$BIN_DIR/detect`
-
 # config
 APACHE_VERSION="2.2.25"
 APACHE_PATH="apache"
@@ -27,7 +25,7 @@ mkdir -p $CACHE_DIR/www
 # move app things to www
 mv * $CACHE_DIR/www
 
-if [ $APPTYPE == "LiveCode revIgniter" ]; then
+if [ -d "$CACHE_DIR/www/application" ]; then
     if [[ ! -d "$CACHE_DIR/www/system" && ! -d "$CACHE_DIR/www/revigniter" ]]; then
         cd $CACHE_DIR
  
