@@ -6,13 +6,16 @@ set -e
 
 heroku_rev='-2'
 
+BIN_DIR=$(dirname $0)
+BUILD_DIR=$1
+CACHE_DIR=$2
+
+APPTYPE=`./detect`
+
 # config
 APACHE_VERSION="2.2.25"
 APACHE_PATH="apache"
 
-BIN_DIR=$(dirname $0)
-BUILD_DIR=$1
-CACHE_DIR=$2
 LP_DIR=`cd $(dirname $0); cd ..; pwd`
 
 # include .files when moving things around
@@ -20,9 +23,38 @@ shopt -s dotglob
 
 cd $BUILD_DIR
 
-# move app things to www
 mkdir -p $CACHE_DIR/www
+# move app things to www
 mv * $CACHE_DIR/www
+
+if [ $APPTYPE == "LiveCode revIgniter" ]; then
+    if [[ ! -d "$CACHE_DIR/www/system" || ! -d "$CACHE_DIR/www/revigniter" ]]; then
+        cd $CACHE_DIR
+ 
+        # clone revigniter repo
+        git clone https://github.com/revig/revigniter.git
+        
+        # checkout most recent tag so hopefully tags are only versions ;-)
+        cd revigniter
+        TAG=`git for-each-ref refs/tags --sort=-taggerdate --format='%(refname)' --count=1`
+        git checkout $TAG
+        
+        rm -r system/application
+        mv system "$CACHE_DIR/www/system"
+        
+        if [ ! -f "$CACHE_DIR/index.lc" ]; then
+            mv index.lc "$CACHE_DIR/www"
+        fi
+        
+        if [ ! -f "$CACHE_DIR/.htaccess" ]; then
+            mv "$LP_DIR/conf/revigniter.htaccess" "$CACHE_DIR/www/.htaccess"
+        fi
+        
+        cd $BUILD_DIR
+    fi
+    
+fi
+
 mv $CACHE_DIR/www .
 
 # keep Procfile

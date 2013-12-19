@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-if [ -f $1/index.lc ]; then
+if [ -d "$1/application" ]; then
+  echo "LiveCode revIgniter" && exit 0
+elif [ -f "$1/index.lc" ]; then
   echo "LiveCode" && exit 0
 else
   echo "no" && exit 1

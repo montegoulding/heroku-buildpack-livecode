@@ -1,0 +1,8 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine on
+    RewriteBase /
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond $1 !^(index\.lc|image|img|assets|robots\.txt|css|js)
+    RewriteRule ^(.*)$ index.lc?/$1 [L]
+</IfModule>
