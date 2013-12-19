@@ -40,9 +40,6 @@ LIVECODE_URL="http://mergext.com/lcserver.tar.gz"
 echo "-----> Bundling LiveCode version $LIVECODE_VERSION"
 curl --silent --max-time 60 --location "$LIVECODE_URL" | tar xz
 
-test=`ls`
-echo $test
-
 chmod 755 livecode-community-server
 echo "-----> LiveCode installed"
 cd $BUILD_DIR
