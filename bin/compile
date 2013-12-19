@@ -28,27 +28,35 @@ mkdir -p $CACHE_DIR/www
 mv * $CACHE_DIR/www
 
 if [ $APPTYPE == "LiveCode revIgniter" ]; then
-    if [[ ! -d "$CACHE_DIR/www/system" || ! -d "$CACHE_DIR/www/revigniter" ]]; then
+    if [[ ! -d "$CACHE_DIR/www/system" && ! -d "$CACHE_DIR/www/revigniter" ]]; then
         cd $CACHE_DIR
  
+        echo "-----> Cloning revIgniter"
         # clone revigniter repo
         git clone https://github.com/revig/revigniter.git
         
         # checkout most recent tag so hopefully tags are only versions ;-)
         cd revigniter
         TAG=`git for-each-ref refs/tags --sort=-taggerdate --format='%(refname)' --count=1`
+        
+        echo "-----> Checking out revIgniter $TAG"
+        
         git checkout $TAG
+        
+        echo "-----> Bundling revIgniter"
         
         rm -r system/application
         mv system "$CACHE_DIR/www/system"
         
-        if [ ! -f "$CACHE_DIR/index.lc" ]; then
+        if [ ! -f "$CACHE_DIR/www/index.lc" ]; then
             mv index.lc "$CACHE_DIR/www"
         fi
         
-        if [ ! -f "$CACHE_DIR/.htaccess" ]; then
+        if [ ! -f "$CACHE_DIR/www/.htaccess" ]; then
             mv "$LP_DIR/conf/revigniter.htaccess" "$CACHE_DIR/www/.htaccess"
         fi
+        
+        echo "-----> revIgniter installed"
         
         cd $BUILD_DIR
     fi
