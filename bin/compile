@@ -10,7 +10,7 @@ BIN_DIR=$(dirname $0)
 BUILD_DIR=$1
 CACHE_DIR=$2
 
-APPTYPE=`./detect`
+APPTYPE=`$BIN_DIR/detect`
 
 # config
 APACHE_VERSION="2.2.25"
