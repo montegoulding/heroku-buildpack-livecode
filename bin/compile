@@ -1,0 +1,69 @@
+#!/usr/bin/env bash
+# bin/compile <build-dir> <cache-dir>
+
+# fail fast
+set -e
+
+heroku_rev='-2'
+
+# config
+APACHE_VERSION="2.2.25"
+APACHE_PATH="apache"
+
+BIN_DIR=$(dirname $0)
+BUILD_DIR=$1
+CACHE_DIR=$2
+LP_DIR=`cd $(dirname $0); cd ..; pwd`
+
+# include .files when moving things around
+shopt -s dotglob
+
+cd $BUILD_DIR
+
+# move app things to www
+mkdir -p $CACHE_DIR/www
+mv * $CACHE_DIR/www
+mv $CACHE_DIR/www .
+
+# keep Procfile
+if [ -f www/Procfile ]; then
+  mv www/Procfile .
+fi
+
+APACHE_URL="https://heroku-buildpack-php.s3.amazonaws.com/apache-""$APACHE_VERSION""$heroku_rev"".tar.gz"
+echo "-----> Bundling Apache version $APACHE_VERSION"
+curl --silent --max-time 60 --location "$APACHE_URL" | tar xz
+echo "-----> Apache installed"
+
+cd $APACHE_PATH/cgi-bin
+LIVECODE_URL="http://mergext.com/lcserver.tar.gz"
+echo "-----> Bundling LiveCode version $LIVECODE_VERSION"
+curl --silent --max-time 60 --location "$LIVECODE_URL" | tar xz
+
+test=`ls`
+echo $test
+
+chmod 755 livecode-community-server
+echo "-----> LiveCode installed"
+cd $BUILD_DIR
+chmod 755 $APACHE_PATH/cgi-bin
+
+# update config files
+cp $LP_DIR/conf/httpd.conf $APACHE_PATH/conf
+
+cat >>boot.sh <<EOF
+for var in \`env|cut -f1 -d=\`; do
+  echo "PassEnv \$var" >> /app/apache/conf/httpd.conf;
+done
+touch /app/apache/logs/error_log
+touch /app/apache/logs/access_log
+tail -F /app/apache/logs/error_log &
+tail -F /app/apache/logs/access_log &
+echo "Launching apache"
+exec /app/apache/bin/httpd -DNO_DETACH
+EOF
+
+chmod +x boot.sh
+
+# clean the cache
+rm -rf $CACHE_DIR
