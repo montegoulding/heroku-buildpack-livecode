@@ -1,0 +1,3 @@
+[submodule "revigniter"]
+	path = revigniter
+	url = https://github.com/revig/revigniter.git
