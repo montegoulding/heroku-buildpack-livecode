@@ -41,7 +41,7 @@ if [ -d "$CACHE_DIR/www/application" ]; then
         if [ ! -f "$CACHE_DIR/www/index.lc" ]; then
             # set the app folder
             export replace="$BUILD_DIR/www/application"
-            sed "s/put \"application\" into gApplicationFolder/put \"${replace}\" into gApplicationFolder/" "$CACHE_DIR/revigniter-""$REVIGNITER_VERSION""/index.lc" > "$CACHE_DIR/www/index.lc"
+            sed -e "s@put \"application\" into gApplicationFolder@put \"${replace}\" into gApplicationFolder@" "$CACHE_DIR/revigniter-""$REVIGNITER_VERSION""/index.lc" > "$CACHE_DIR/www/index.lc"
         fi
         
         if [ ! -f "$CACHE_DIR/www/.htaccess" ]; then
