@@ -30,9 +30,8 @@ if [ -d "$CACHE_DIR/www/application" ]; then
         cd $CACHE_DIR
         
         REVIGNITER_URL="https://github.com/revig/revigniter/archive/master.tar.gz"
-        echo "-----> Bundling revIgniter version"
+        echo "-----> Bundling revIgniter"
         curl --silent --max-time 60 --location "$REVIGNITER_URL" | tar xz
-        echo "-----> revIgniter installed"
         
         mv "$CACHE_DIR/revigniter-master/system" "$CACHE_DIR/www"
         rm -r "$CACHE_DIR/www/system/application"
