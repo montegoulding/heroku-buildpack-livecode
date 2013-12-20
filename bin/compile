@@ -39,7 +39,9 @@ if [ -d "$CACHE_DIR/www/application" ]; then
         rm -r "$CACHE_DIR/www/system/application"
         
         if [ ! -f "$CACHE_DIR/www/index.lc" ]; then
-            mv "$CACHE_DIR/revigniter-""$REVIGNITER_VERSION""/index.lc" "$CACHE_DIR/www"
+            # set the app folder
+            export replace="$BUILD_DIR/www/application"
+            sed "s/put \"application\" into gApplicationFolder/put \"${replace}\" into gApplicationFolder/" "$CACHE_DIR/revigniter-""$REVIGNITER_VERSION""/index.lc" > "$CACHE_DIR/www/index.lc"
         fi
         
         if [ ! -f "$CACHE_DIR/www/.htaccess" ]; then
