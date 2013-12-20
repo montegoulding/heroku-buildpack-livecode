@@ -13,7 +13,6 @@ CACHE_DIR=$2
 # config
 APACHE_VERSION="2.2.25"
 APACHE_PATH="apache"
-REVIGNITER_VERSION="1.6.6"
 
 LP_DIR=`cd $(dirname $0); cd ..; pwd`
 
@@ -30,18 +29,18 @@ if [ -d "$CACHE_DIR/www/application" ]; then
     if [[ ! -d "$CACHE_DIR/www/system" && ! -d "$CACHE_DIR/www/revigniter" ]]; then
         cd $CACHE_DIR
         
-        REVIGNITER_URL="https://github.com/revig/revigniter/archive/""$REVIGNITER_VERSION"".tar.gz"
-        echo "-----> Bundling revIgniter version $REVIGNITER_VERSION"
+        REVIGNITER_URL="https://github.com/revig/revigniter/archive/master.tar.gz"
+        echo "-----> Bundling revIgniter version"
         curl --silent --max-time 60 --location "$REVIGNITER_URL" | tar xz
         echo "-----> revIgniter installed"
         
-        mv "$CACHE_DIR/revigniter-""$REVIGNITER_VERSION""/system" "$CACHE_DIR/www"
+        mv "$CACHE_DIR/revigniter-master/system" "$CACHE_DIR/www"
         rm -r "$CACHE_DIR/www/system/application"
         
         if [ ! -f "$CACHE_DIR/www/index.lc" ]; then
             # set the app folder
             export replace="/app/www/application"
-            sed -e "s@put \"application\" into gApplicationFolder@put \"${replace}\" into gApplicationFolder@" "$CACHE_DIR/revigniter-""$REVIGNITER_VERSION""/index.lc" > "$CACHE_DIR/www/index.lc"
+            sed -e "s@put \"application\" into gApplicationFolder@put \"${replace}\" into gApplicationFolder@" "$CACHE_DIR/revigniter-master/index.lc" > "$CACHE_DIR/www/index.lc"
         fi
         
         if [ ! -f "$CACHE_DIR/www/.htaccess" ]; then
